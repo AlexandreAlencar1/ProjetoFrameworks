@@ -3,84 +3,59 @@ import { Component } from 'react';
 
 class App extends Component {
 
-  timeoutUpdate = null
   state = {
-    counter: 0,
     posts: [
-      {
-        id: 1,
-        title: 'Título 1',
-        body: 'Corpo 1'
-      },
-      {
-        id: 1,
-        title: 'Título 2',
-        body: 'Corpo 2'
-      },
-      {
-        id: 1,
-        title: 'Título 3',
-        body: 'Corpo 3'
-      },
-      {
-        id: 1,
-        title: 'Título 4',
-        body: 'Corpo 4'
-      },
+
     ],
   };
 
-  componentDidMount() { //executa apenas na criação do component
-    this.handleTimeOut();
-
-    // setTimeout(() => {
-    //   this.setState({
-    //     counter: 0,
-    //     posts: [
-
-    //     ],
-    //   });
-    // }, 2000)
+  //carrega os dados
+  componentDidMount() {
+    this.loadPosts()//carrega os dados
 
   }
 
-  componentDidUpdate() {//chama so pra dar update
-    this.handleTimeOut();
-  }
+  //fetch de pegar, obviamente
+  loadPosts = async () => {
+    const postsResponse = fetch("https://jsonplaceholder.typicode.com/posts")
 
-  componentWillUnmount(){
-    clearTimeout(this.timeoutUpdate); //pro bagulho nao ficar rodando pra sempre
-  }
+    const photosResponse = fetch("https://jsonplaceholder.typicode.com/photos")
 
-  handleTimeOut() {
-    const { posts, counter } = this.state;
+    const [posts, photos] = await Promise.all([postsResponse, photosResponse])
 
-    this.timeoutUpdate = setTimeout(() => {
-      posts[0].title = "O titulo mudou..."
-      this.setState({
-        posts,
-        counter: counter + 1
-      })
-    }, 2000)
+    //conversao para json
+    const postsJson = await posts.json()
+    const photosJson = await photos.json()
+    //aqui ja tava na quinta marcha, depois vejo oque faz
+    const photosAndPosts = postsJson.map((post, index) => {
+      return {
+        ...post,
+        cover: photosJson[index].url,
+      }
+    })
+
+    this.setState({ posts: photosAndPosts })
   };
 
   render() {
 
-    const { posts, counter } = this.state  //isso aqui é chamado de destructor 
+    const { posts } = this.state  //isso aqui é chamado de destructor 
 
     return (
-      <div className="App">
-        <h1>{counter}</h1>
-        {posts.map((post) => ( //toda vez tem a arrowFunction afee
-          <div key={post.id}>
-            <h1>{post.title}</h1>
-            <h3>{post.body}</h3>
-          </div>
+      <section className="container">
+        <div className="posts">
+          {posts.map((post) => ( //toda vez tem a arrowFunction afee
+            <div key={post.id} className='post'>
+              <img src={post.cover} alt="" />
+              <div className='text'>
+                <h1>{post.title}</h1>
+                <h3>{post.body}</h3>
+              </div>
+            </div>
 
-        ))}
-      </div>
-
-
+          ))}
+        </div>
+      </section>
     );
   }
 }

@@ -58,7 +58,7 @@ class Home extends Component {
 
     return (
       <section className="container">
-          <input type="text" id="#txtSearch" name="name" placeholder="Search..." onChange={this.handleSearch} value={searchValue} />
+          <input type="text" id="txtSearch" name="name" placeholder="Search..." onChange={this.handleSearch} value={searchValue} />
         <div className="posts">
           {filteredPosts.map((post) => (
             <PostCard key={post.id} post={post} />

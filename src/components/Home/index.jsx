@@ -1,24 +1,24 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 /* eslint-disable no-useless-constructor */
-import "./styles.css";
-import { Component } from "react";
 import { loadPosts } from "../../utils/load-posts";
-import { PostCard } from "../PostCard";
 import { Button } from "../Button";
+import { PostCard } from "../PostCard";
+import "./styles.css";
 
-class Home extends Component {
+const [posts, setPosts] = useState 
+{
   state = {
     posts: [],
     allPosts: [],
     page: 0,
-    postsPerPage: 2,
-    searchValue: ''
+    postsPerPage: 10,
+    searchValue: "",
   };
 
   // fetch aqui
-  componentDidMount() {
-    this.loadPosts();
-  }
+  // componentDidMount() { //funcao exclusiva pra componente baseado em classe
+  //   this.loadPosts();
+  // }
 
   loadPosts = async () => {
     const { page, postsPerPage } = this.state;
@@ -40,34 +40,39 @@ class Home extends Component {
     this.setState({ posts: [...posts, ...nextPosts], page: nextPage });
   };
 
-  handleSearch = (e) => {
+  handleSearch = (e) => {//pra acessar oque ta aqui dentro
     const {value} = e.target;
     this.setState({searchValue: value});
-    console.log(this.state.searchValue);
+ //   console.log(this.state.searchValue);
   }
 
-  render() {
-    const { posts, searchValue } = this.state;
+  return (
+    <section className="container">
+        <input 
+        type="text"
+        id="txtSearch" 
+        name="name" 
+        placeholder="Search..." 
+        onChange={this.handleSearch} 
+        value={searchValue} />
+        
+      <div className="posts">
+        {filteredPosts.map((post) => (
+          <PostCard key={post.id} post={post} />
+        ))}
+      </div>
+      <Button text="Load more posts" action={this.loadMorePosts} />
+    </section>
+  );
 
-    const filteredPosts = !!searchValue
-    ? posts.filter((post) => {
-      return post.title.toLowerCase().includes(searchValue.toLowerCase());
-    })
-    : posts;
-
-
-    return (
-      <section className="container">
-          <input type="text" id="txtSearch" name="name" placeholder="Search..." onChange={this.handleSearch} value={searchValue} />
-        <div className="posts">
-          {filteredPosts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
-        </div>
-        <Button text="Load more posts" action={this.loadMorePosts} />
-      </section>
-    );
-  }
+  // render() {//rendeliza a pag toda
+  //   const { posts, searchValue } = this.state;
+  //   const filteredPosts = !!searchValue
+  //   ? posts.filter((post) => {
+  //     return post.title.toLowerCase().includes(searchValue.toLowerCase());
+  //   })
+  //   : posts;
+  // }
 }
 
 export default Home;
